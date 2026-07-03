@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import { getVehicles } from '@/lib/vehicles';
 import CatalogFilters from '@/components/CatalogFilters';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: 'Catálogo | UVOLT Motos Elétricas Salvador',
   description:

@@ -14,25 +14,31 @@ function slugify(name: string) {
 }
 
 export async function signInAction(formData: FormData) {
+  const origin = String(formData.get('origin') ?? '/login');
   const supabase = createSupabaseServerClient();
   if (!supabase) {
-    redirect('/admin/login?error=supabase-nao-configurado');
+    redirect(`${origin}?error=supabase-nao-configurado`);
   }
 
   const email = String(formData.get('email') ?? '');
   const password = String(formData.get('password') ?? '');
 
-  const { error } = await supabase!.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase!.auth.signInWithPassword({ email, password });
   if (error) {
-    redirect(`/admin/login?error=${encodeURIComponent(error.message)}`);
+    redirect(`${origin}?error=${encodeURIComponent(error.message)}`);
   }
-  redirect('/admin/dashboard');
+
+  const role = data.user?.user_metadata?.role;
+  if (role === 'admin') redirect('/admin/dashboard');
+  if (role === 'client') redirect('/client/dashboard');
+
+  redirect(`${origin}?error=${encodeURIComponent('Usuário sem permissão definida (admin/client)')}`);
 }
 
-export async function signOutAction() {
+export async function signOutAction(redirectTo: string = '/login') {
   const supabase = createSupabaseServerClient();
   if (supabase) await supabase.auth.signOut();
-  redirect('/admin/login');
+  redirect(redirectTo);
 }
 
 export async function createVehicleAction(formData: FormData) {

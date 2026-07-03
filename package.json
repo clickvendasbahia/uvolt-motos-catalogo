@@ -6,11 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "import:vehicles": "tsx scripts/import-vehicles.ts"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.4",
     "@supabase/ssr": "^0.5.1",
+    "@supabase/supabase-js": "^2.45.4",
     "next": "^14.2.30",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
@@ -20,8 +21,11 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.19",
+    "dotenv": "^17.4.2",
     "postcss": "^8.4.39",
     "tailwindcss": "^3.4.6",
-    "typescript": "^5.5.3"
+    "tsx": "^4.23.0",
+    "typescript": "^5.5.3",
+    "xlsx": "^0.18.5"
   }
 }

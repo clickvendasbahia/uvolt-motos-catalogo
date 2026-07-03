@@ -7,7 +7,7 @@ export interface Vehicle {
   autonomy_km: number;
   price: number | null;
 
-  image: string; // <- muda aqui
+  image: string; // 
 
   status: 'available' | 'inactive';
   created_at: string;
