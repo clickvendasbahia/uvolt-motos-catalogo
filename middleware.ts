@@ -5,8 +5,22 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 
 type Role = 'admin' | 'client' | undefined;
 
+const ADMIN_HOST = 'admin.uvoltmotos.com.br';
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const hostname = (request.headers.get('host') ?? '').split(':')[0];
+
+  // Host dedicado: admin.uvoltmotos.com.br serve exclusivamente o painel admin.
+  // catalogo.uvoltmotos.com.br (e qualquer outro host) mantém o comportamento atual.
+  if (hostname === ADMIN_HOST && !pathname.startsWith('/admin')) {
+    return NextResponse.redirect(new URL('/admin/login', request.url), 308);
+  }
+
+  // Verificação de sessão/role só é necessária para rotas de admin/client.
+  if (!pathname.startsWith('/admin') && !pathname.startsWith('/client')) {
+    return NextResponse.next();
+  }
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -54,5 +68,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/client/:path*'],
+  // Precisa rodar em (quase) toda rota para o redirect por host funcionar
+  // mesmo em "/" — exclui apenas assets estáticos e internals do Next.
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)'],
 };
