@@ -5,3 +5,10 @@ out
 .env.local
 *.tsbuildinfo
 .DS_Store
+
+.vercel
+.env*
+
+.claude/
+uvolt-landing-page.html
+uvoltcatalogodigitalok.zip
