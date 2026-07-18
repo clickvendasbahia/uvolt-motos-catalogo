@@ -8,6 +8,8 @@ export const metadata: Metadata = {
     'Catálogo completo de motos elétricas e bicicletas elétricas da UVOLT em Salvador. Compare autonomia, velocidade e preço.',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function CatalogoPage() {
   const vehicles = await getVehicles();
 

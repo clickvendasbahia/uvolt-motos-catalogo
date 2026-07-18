@@ -1,14 +1,11 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { getVehicleBySlug, getVehicles } from '@/lib/vehicles';
+import { getVehicleBySlug } from '@/lib/vehicles';
 import { formatPrice } from '@/lib/whatsapp';
 import WhatsAppButton from '@/components/WhatsAppButton';
 
-export async function generateStaticParams() {
-  const vehicles = await getVehicles();
-  return vehicles.map((v) => ({ slug: v.slug }));
-}
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params,

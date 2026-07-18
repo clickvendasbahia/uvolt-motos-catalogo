@@ -3,6 +3,8 @@ import Image from 'next/image';
 import { getVehicles } from '@/lib/vehicles';
 import VehicleCard from '@/components/VehicleCard';
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   const vehicles = await getVehicles();
   const featured = vehicles.slice(0, 3);
