@@ -37,7 +37,8 @@ export async function signInAction(formData: FormData) {
   redirect('/admin/dashboard');
 }
 
-export async function signOutAction(redirectTo = '/admin/login') {
+export async function signOutAction(arg?: string | FormData) {
+  const redirectTo = typeof arg === 'string' ? arg : '/admin/login';
   const supabase = createSupabaseServerClient();
   if (supabase) await supabase.auth.signOut();
   redirect(redirectTo);
