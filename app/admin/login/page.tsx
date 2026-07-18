@@ -18,7 +18,6 @@ export default function AdminLoginPage({
         )}
 
         <form action={signInAction} className="mt-6 space-y-4">
-          <input type="hidden" name="origin" value="/admin/login" />
           <div>
             <label className="text-xs font-medium uppercase tracking-wide text-slate">
               E-mail

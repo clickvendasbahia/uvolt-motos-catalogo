@@ -11,7 +11,7 @@ export default async function AdminDashboardPage() {
       <div className="mx-auto max-w-5xl">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-extrabold text-mist">Dashboard</h1>
-          <form action={signOutAction.bind(null, '/admin/login')}>
+          <form action={signOutAction}>
             <button className="rounded-full border border-white/10 px-5 py-2 text-sm text-slate hover:text-mist">
               Sair
             </button>

@@ -23,6 +23,7 @@ export default async function AdminVeiculosPage() {
             <thead className="bg-carbon text-slate">
               <tr>
                 <th className="px-5 py-3">Nome</th>
+                <th className="px-5 py-3">Tipo</th>
                 <th className="px-5 py-3">Autonomia</th>
                 <th className="px-5 py-3">Status</th>
                 <th className="px-5 py-3" />
@@ -32,6 +33,7 @@ export default async function AdminVeiculosPage() {
               {vehicles.map((v) => (
                 <tr key={v.id} className="bg-graphite">
                   <td className="px-5 py-4 font-semibold text-mist">{v.name}</td>
+                  <td className="px-5 py-4 text-slate">{v.type === 'bike' ? 'Bike' : 'Moto'}</td>
                   <td className="px-5 py-4 text-slate">{v.autonomy_km} km</td>
                   <td className="px-5 py-4">
                     <VehicleRowActions id={v.id} status={v.status} />

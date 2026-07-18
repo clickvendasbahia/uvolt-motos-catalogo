@@ -3,9 +3,6 @@ import Image from 'next/image';
 import { getVehicles } from '@/lib/vehicles';
 import VehicleCard from '@/components/VehicleCard';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
 export default async function HomePage() {
   const vehicles = await getVehicles();
   const featured = vehicles.slice(0, 3);
@@ -46,7 +43,7 @@ export default async function HomePage() {
         <div className="mx-auto mt-16 max-w-5xl">
           <div className="relative aspect-[16/9] overflow-hidden rounded-3xl border border-white/5">
             <Image
-src={vehicles[0]?.image ?? '/vehicles/max-12-maj.svg'}
+              src={vehicles[0]?.images[0] ?? '/vehicles/max-12-maj.svg'}
               alt="UVOLT showroom"
               fill
               priority
