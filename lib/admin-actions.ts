@@ -4,38 +4,40 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { createSupabaseServerClient } from './supabase/server';
 
+function parseImages(raw: FormDataEntryValue | null): string[] {
+  try {
+    const parsed = JSON.parse(String(raw ?? '[]'));
+    if (Array.isArray(parsed)) return parsed.filter((s) => typeof s === 'string' && s);
+  } catch {}
+  return [];
+}
+
 function slugify(name: string) {
   return name
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[̀-ͯ]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
 }
 
 export async function signInAction(formData: FormData) {
-  const origin = String(formData.get('origin') ?? '/login');
   const supabase = createSupabaseServerClient();
   if (!supabase) {
-    redirect(`${origin}?error=supabase-nao-configurado`);
+    redirect('/admin/login?error=supabase-nao-configurado');
   }
 
   const email = String(formData.get('email') ?? '');
   const password = String(formData.get('password') ?? '');
 
-  const { data, error } = await supabase!.auth.signInWithPassword({ email, password });
+  const { error } = await supabase!.auth.signInWithPassword({ email, password });
   if (error) {
-    redirect(`${origin}?error=${encodeURIComponent(error.message)}`);
+    redirect(`/admin/login?error=${encodeURIComponent(error.message)}`);
   }
-
-  const role = data.user?.user_metadata?.role;
-  if (role === 'admin') redirect('/admin/dashboard');
-  if (role === 'client') redirect('/client/dashboard');
-
-  redirect(`${origin}?error=${encodeURIComponent('Usuário sem permissão definida (admin/client)')}`);
+  redirect('/admin/dashboard');
 }
 
-export async function signOutAction(redirectTo: string = '/login') {
+export async function signOutAction(redirectTo = '/admin/login') {
   const supabase = createSupabaseServerClient();
   if (supabase) await supabase.auth.signOut();
   redirect(redirectTo);
@@ -47,16 +49,18 @@ export async function createVehicleAction(formData: FormData) {
 
   const name = String(formData.get('name') ?? '');
   const payload = {
-  name,
-  slug: slugify(name),
-  description: String(formData.get('description') ?? ''),
-  autonomy_km: Number(formData.get('autonomy_km') ?? 0),
-  price: formData.get('price') ? Number(formData.get('price')) : null,
-  image: String(formData.get('image_url') ?? '/vehicles/max-12-maj.svg'),
-  status: (formData.get('status') === 'inactive' ? 'inactive' : 'available') as
-    | 'available'
-    | 'inactive',
-};
+    name,
+    slug: slugify(name),
+    type: String(formData.get('type') ?? 'moto'),
+    tagline: String(formData.get('tagline') ?? ''),
+    description: String(formData.get('description') ?? ''),
+    autonomy_km: Number(formData.get('autonomy_km') ?? 0),
+    max_speed_kmh: Number(formData.get('max_speed_kmh') ?? 0),
+    recharge_time: String(formData.get('recharge_time') ?? ''),
+    price: formData.get('price') ? Number(formData.get('price')) : null,
+    images: parseImages(formData.get('images_json')),
+    status: (formData.get('status') === 'inactive' ? 'inactive' : 'available') as 'available' | 'inactive',
+  };
 
   const { error } = await supabase!.from('vehicles').insert(payload);
   if (error) redirect(`/admin/veiculos/novo?error=${encodeURIComponent(error.message)}`);
@@ -72,16 +76,18 @@ export async function updateVehicleAction(id: string, formData: FormData) {
 
   const name = String(formData.get('name') ?? '');
   const payload = {
-  name,
-  slug: slugify(name),
-  description: String(formData.get('description') ?? ''),
-  autonomy_km: Number(formData.get('autonomy_km') ?? 0),
-  price: formData.get('price') ? Number(formData.get('price')) : null,
-  image: String(formData.get('image_url') ?? '/vehicles/max-12-maj.svg'),
-  status: (formData.get('status') === 'inactive' ? 'inactive' : 'available') as
-    | 'available'
-    | 'inactive',
-};
+    name,
+    slug: slugify(name),
+    type: String(formData.get('type') ?? 'moto'),
+    tagline: String(formData.get('tagline') ?? ''),
+    description: String(formData.get('description') ?? ''),
+    autonomy_km: Number(formData.get('autonomy_km') ?? 0),
+    max_speed_kmh: Number(formData.get('max_speed_kmh') ?? 0),
+    recharge_time: String(formData.get('recharge_time') ?? ''),
+    price: formData.get('price') ? Number(formData.get('price')) : null,
+    images: parseImages(formData.get('images_json')),
+    status: (formData.get('status') === 'inactive' ? 'inactive' : 'available') as 'available' | 'inactive',
+  };
 
   const { error } = await supabase!.from('vehicles').update(payload).eq('id', id);
   if (error) redirect(`/admin/veiculos/${id}/editar?error=${encodeURIComponent(error.message)}`);
